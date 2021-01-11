@@ -1,0 +1,81 @@
+.ds ]W %
+.ds ]L
+.nh
+.TH bgadd 1 "OpenLava Version 4.0 - Aug 2016"
+.br
+.SH NAME
+\fBbgadd\fR - creates job groups 
+.SH SYNOPSIS
+.BR
+.PP
+\fBbgadd\fR [\fB-L\fR limit] \fIjob_group_name\fR
+.PP
+\fBbgadd\fR [\fB-h\fR | \fB-V\fR] 
+.SH DESCRIPTION
+.BR
+.PP
+.PP
+Creates a job group with the job group name specified by \fIjob_group_name\fR.
+.PP
+You must provide full group path name for the new job group. The
+last component of the path is the name of the new group to be
+created.
+.PP
+You do not need to create the parent job group before you create
+a sub-group under it. If no groups in the job group hierarchy
+exist, all groups are created with the specified hierarchy.
+.PP
+.SH OPTIONS
+.BR
+.PP
+.TP
+\fB-L\fR \fIlimit\fR
+.IP
+Specifies the maximum number of concurrent job slots allowed to
+run under the job group (including child groups). The option limits
+the number of started jobs (RUN, SSUSP, USUSP) under the job group.
+Specify a positive number between 0 and INT32_MAX-1 (2147483647).
+If the specified
+limit is zero, no jobs under the job group can run.
+.IP
+You cannot specify a limit for the root job group. The root job
+group has no job limit. Job groups added with no limits specified
+inherit any limits of existing parent job groups. The option only
+limits the lowest level job group created.
+.IP
+By default, a job group has no job slot limit. Limits persist
+across mbatchd restart or reconfiguration.
+.TP
+\fIjob_group_name\fR
+.IP
+Full path of the job group name.
+.TP
+\fB-h
+\fR
+.IP
+Prints command usage to stderr and exits. 
+
+
+.TP 
+\fB-V
+\fR
+.IP
+Prints OpenLava release version to stderr and exits. 
+
+.PP
+.SH EXAMPLES
+.BR
+.PP
+Create a job group name mygroup under the root group /:
+.PP
+bgadd /mygroup
+.PP
+Create a job group named subgroup1 under job group /mygroup:
+.PP
+bgadd /mygroup/subgroup1
+.PP
+.SH SEE ALSO
+.BR
+.PP
+.PP
+bgdel(1), bgmod(1), bjgroup(1)

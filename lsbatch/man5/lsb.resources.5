@@ -1,0 +1,397 @@
+.ds ]W %
+.ds ]L
+.nh
+.TH lsb.resources 5 "OpenLava Version 4.0 - Aug 2016"
+.br
+.SH NAME
+\fBlsb.resources\fR
+.SS \fB\fROverview
+.BR
+.PP
+.PP
+The lsb.resources file contains configuration information for
+resource allocation limits. This file is optional. All sections are
+optional.
+.SS Contents
+.BR
+.PP
+.RS
+.HP 2
+\(bu Limit Section
+.RE
+.SH Limit Section
+.BR
+.PP
+.SH Description
+.BR
+.PP
+.PP
+Defines limits for the maximum amount of the specified resources that
+jobs are able to consume, and which resource consumers the limits apply to.
+Limits are enforced during job resource allocation.
+.PP
+Consumer type:
+.RS
+.HP 2
+\(bu QUEUES or PER_QUEUE
+.HP 2
+\(bu USERS or PER_USER
+.HP 2
+\(bu PROJECTS or PER_PROJECT
+.HP 2
+\(bu HOSTS or PER_HOST
+.RE
+.PP
+Resource type:
+.RS
+.HP 2
+\(bu SLOTS
+.HP 2
+\(bu JOBS
+.RE
+.PP
+The following use cases are supported:
+.RS
+.HP 2
+\(bu If SLOTS or JOBS is configured to be 0, any combination of the consumer types
+can be specified. This enables restricting a subset of the consumers to run jobs.
+.HP 2
+\(bu If SLOTS or JOBS is configured to be non-zero, the following cases are supported:
+.PP
+.RS
+.HP 2
+\(bu Limit the number of slots/jobs each project can use/run from particular queues;
+i.e., PER_PROJECT, QUEUES, and SLOTS or JOBS can be specified in combination.
+.HP 2
+\(bu Limit the number of slots/jobs each user can use/run from particular queues;
+i.e., PER_USER, QUEUES, SLOTS or JOBS can be specified in combination.
+.HP 2
+\(bu Limit the number of slots/jobs on each host from particular queues;
+i.e., PER_HOST, QUEUES, and SLOTS or JOBS can be specified in combination.
+.RE
+.PP
+\(bu Cases outside of these combinations are currently not supported.
+.RE
+.PP
+After making any changes to lsb.resources,
+run \fBbadmin\fR reconfig to reconfigure mbatchd.
+.SH Limit Section Structure
+.BR
+.PP
+.PP
+Each limit definition begins with the line Begin Limit and ends with
+the line End Limit. A limit section is defined in horizontal format.
+Each row defines one consumer or resource. On resource and at least
+one consumer must be specified in a limit section.
+.SH QUEUES or PER_QUEUE
+.BR
+.PP
+.SS Syntax
+.BR
+.PP
+.PP
+\fBQUEUES | PER_QUEUE\fR \fB=\fR \fIall\fR [~]\fIqueue_name\fR ...
+.SS Description
+.BR
+.PP
+.PP
+A space-separated list of queue names on which limits are enforced.
+.PP
+The list must contain valid queue names defined in \fBlsb.queues\fR.
+.PP
+Use the not operator (~) to exclude queues from the all specification in the limit.
+This is useful if you have a large number of queues but only want to exclude
+a few queues from the limit definition.
+.SS Default
+.BR
+.PP
+.PP
+None. If no limit is specified for PER_QUEUE or QUEUES, no limit is enforced on any queue.
+.SS Example
+.BR
+.PP
+.PP
+\fBQUEUES\fR \fB=\fR \fBpriority idle\fR
+.SH USERS or PER_USER
+.BR
+.PP
+.SS Syntax
+.BR
+.PP
+.PP
+\fBUSERS | PER_USER\fR \fB=\fR \fIall\fR [~]\fIuser_name\fR ... | [~]\fIuser_group\fR ...
+.SS Description
+.BR
+.PP
+.PP
+A space-separated list of user names or user groups on which limits are enforced.
+.PP
+User names must be valid login names.
+User group names can be OpenLava user groups or UNIX user groups.
+UNIX user groups must be configured in \fBlsb.users\fR.
+.PP
+If a group contains a subgroup, the limit also applies
+to each member in the subgroup recursively.
+.PP
+Use the not operator (~) to exclude users or user groups from the all specification in the limit.
+This is useful if you have a large number of users but only want to exclude
+a few users or groups from the limit definition.
+.SS Default
+.BR
+.PP
+.PP
+None. If no limit is specified for PER_USER or USERS, no limit is enforced on any user or user group.
+.SS Example
+.BR
+.PP
+.PP
+\fBUSERS\fR \fB=\fR \fBall ~user1 ~user2\fR
+.SH HOSTS or PER_HOST
+.BR
+.PP
+.SS Syntax
+.BR
+.PP
+.PP
+\fBHOSTS | PER_HOST\fR \fB=\fR \fIall\fR [~]\fIhost_name\fR ... | [~]\fIhost_group\fR ...
+.SS Description
+.BR
+.PP
+.PP
+A space-separated list of host names or host groups
+defined in \fBlsb.hosts\fR on which limits are enforced.
+.PP
+If a group contains a subgroup, the limit also applies
+to each member in the subgroup recursively.
+.PP
+Use the not operator (~) to exclude hosts from the all specification in the limit.
+This is useful if you have a large cluster but only want to exclude
+a few hosts from the limit definition.
+.SS Default
+.BR
+.PP
+.PP
+None. If no limit is specified for PER_HOST or HOSTS, no limit is enforced on any host or host group.
+.SS Example
+.BR
+.PP
+.PP
+\fBHOSTS\fR \fB=\fR \fBGroup1 ~hostA ~hostB ~hostC\fR
+.SH PROJECTS or PER_PROJECT
+.BR
+.PP
+.SS Syntax
+.BR
+.PP
+.PP
+\fBPROJECTS | PER_PROJECT\fR \fB=\fR \fIall\fR [~]\fIproject_name\fR ...
+.SS Description
+.BR
+.PP
+.PP
+A space-separated list of project names on which limits are enforced.
+.PP
+Use the not operator (~) to exclude projects from the all specification in the limit.
+.SS Default
+.BR
+.PP
+.PP
+None. If no limit is specified for PER_PROJECT or PROJECTS, no limit is enforced on any project.
+.SS Example
+.BR
+.PP
+.PP
+\fBPROJECTS\fR \fB=\fR \fIall ~p1 ~p2 ~p3\fR
+.SH SLOTS
+.BR
+.PP
+.SS Syntax
+.BR
+.PP
+.PP
+\fBSLOTS\fR \fB=\fR \fIinteger\fR | [\fIinteger\fR \fI[day:]hour[:minute]\fR] ...
+.SS Description
+.BR
+.PP
+.PP
+Maximum number of job slots available to resource consumers.
+.PP
+Time window is optional. The limit is enforced only if current time falls within this time window.
+.SS Default
+.BR
+.PP
+.PP
+No limit.
+.SS Example
+.BR
+.PP
+.PP
+\fBSLOTS\fR \fB=\fR \fI[20 09:00-17:00] [10 17:00-09:00] [100 5:20:00-1:08:00]\fR
+.SH JOBS
+.BR
+.PP
+.SS Syntax
+.BR
+.PP
+.PP
+\fBJOBS\fR \fB=\fR \fIinteger\fR
+.SS Description
+.BR
+.PP
+.PP
+Maximum number of running or suspended (RUN, SSUSP, USUSP) jobs available to resource consumers.
+.SS Default
+.BR
+.PP
+.PP
+No limit.
+.SS Example
+.BR
+.PP
+.PP
+\fBJOBS\fR \fB=\fR \fI20\fR
+.SH Examples of Limit Section
+.BR
+.PP
+.SS Example 1: disallow non-member projects to use a particular queue
+.BR
+.PP
+
+.PP
+Begin Limit
+.br
+NAME=limit1
+.br
+PROJECTS=all ~p1 ~p2 ~p3
+.br
+QUEUES=priority idle
+.br
+SLOTS=0
+.br
+End Limit
+.PP
+.SS Example 2: limit number of jobs per project
+.BR
+.PP
+
+.PP
+Begin Limit
+.br
+NAME=limit2
+.br
+PER_PROJECT=p1 p2
+.br
+QUEUES=all ~idle
+.br
+JOBS=20
+.br
+End Limit
+.PP
+.SS Example 3: only allow certain users to use a hostgroup
+.BR
+.PP
+
+.PP
+Begin Limit
+.br
+NAME=limit3
+.br
+USERS=all ~david ~wlu
+.br
+HOSTS=group0
+.br
+SLOTS=0
+.br
+End Limit
+.PP
+.SS Example 4: specify which projects are allowed to use certain hostgroups from a certain queue
+.BR
+.PP
+
+.PP
+Begin Limit
+.br
+NAME=limit4
+.br
+PROJECTS=all ~p1 ~p2
+.br
+HOSTS=host0 host1
+.br
+QUEUES=priority
+.br
+SLOTS=0
+.br
+End Limit
+.PP
+.SS Example 5: slot limit for each project
+.BR
+.PP
+
+.PP
+Begin Limit
+.br
+NAME = Projectlimit
+.br
+PER_PROJECTS = all
+.br
+SLOTS = 300
+.br
+End Limit
+.PP
+.SS Example 6: slot limit for each user
+.BR
+.PP
+
+.PP
+Begin Limit
+.br
+NAME = nonG1usersLimit
+.br
+PER_USER = all ~G1
+.br
+SLOTS = 100
+.br
+End Limit
+.PP
+.SS Example 7: time-window based slot limit for each user
+.BR
+.PP
+
+.PP
+Begin Limit
+.br
+NAME = G1userslimits
+.br
+PER_USER = G1
+.br
+QUEUES = regression low
+.br
+SLOTS = [200 09:00-17:00] [100 17:00-09:00]
+.br
+End Limit
+.PP
+.SS Example 8: slot limit per host from specific queue
+.BR
+.PP
+
+.PP
+Begin Limit
+.br
+NAME = PerHostLimit
+.br
+PER_HOST = hostGrp1
+.br
+QUEUES = low
+.br
+SLOTS = 12
+.br
+End Limit
+.SH SEE ALSO
+.BR
+.PP
+.PP
+lsf.cluster(5), lsf.conf(5), lsb.params(5),
+lsb.hosts(5), lsb.users(5), lsb.queues(5)
+busers(1), bugroup(1), bchkpnt(1), nice(1), getgrnam(3),
+getrlimit(2), bmgroup(1), bqueues(1), bhosts(1),
+bsub(1), lsid(1), mbatchd(8), badmin(8)
